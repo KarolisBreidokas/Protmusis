@@ -5,18 +5,24 @@
 	</head>
 	<body>
 		<?php
-			session_start();
-			if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
-   				header("Refresh:1; Killall.php");
-			}
-			$conn = mysql_connect($_SESSION['dbhost'], $_SESSION['dbuser'], $_SESSION['dbpass']);
-			if(!$conn) {
-				header("Refresh: 1; url=Killall.php");
-				die('Could not connect: ' . mysql_error());
-			}
-			mysql_set_charset("UTF8", $conn);
-			mysql_select_db($_SESSION['db'], $conn);
-			$Kn=mysql_result(mysql_query("SELECT Kn FROM ServerInfo",$conn),0,0);
+		ession_start();
+		ini_set('display_errors', 'On');
+		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+		// check connection
+		if(mysqli_connect_errno()){
+			header("Refresh: 2; url=Killall.php");
+			die("neprisijungta: ".$mysqli->connect_error);
+		}
+		$mysqli->set_charset("UTF8");
+		$sql="SELECT Kn FROM ServerInfo";
+		if ($result = $mysqli->query($sql))
+		{
+			$row=$result->fetch_row();
+			$Kn=$row['0'];
+		}
+		else{
+			die("Klaida:");
+		}
 			if(isset($_POST['add'])) {
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",1,\"".mysql_real_escape_string($_POST['Ats'])."\")";
