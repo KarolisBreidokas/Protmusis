@@ -6,15 +6,18 @@
   </head>
   <body>
     <?php
+      ini_set('display_errors', 'On');
       session_start();
+      // ignore login screen if already loged in
       if(isset($_SESSION['Kt'])){
         unset($_SESSION['Kt']);
         unset($_SESSION['Kn']);
       }
-      $conn = mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION["dbuser"], $_SESSION["dbpass"]);
-      if(!$conn) {
-        header("Refresh: 1; url=Killall.php");
-        die('Could not connect: ' . mysql_error());
+      $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+      //check connection
+      if(mysqli_connect_errno()){
+        header("Refresh: 2; url=Killall.php");
+        die("neprisijungta: ".$mysqli->connect_error);
       }
     ?>
     <p><a href="Reg.php"><button>Komandos Registracija</button></a></p>

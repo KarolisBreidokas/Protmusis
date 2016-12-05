@@ -8,31 +8,52 @@
 	</head>
 	<body>
 		<?php
+			ini_set('display_errors', 'On');
 			session_start();
+			// ignore login screen if already loged in
 			if(isset($_SESSION['Kt'])){
 				unset($_SESSION['Kt']);
 				unset($_SESSION['Kn']);
 			}
-			$conn = mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION["dbuser"], $_SESSION["dbpass"]);
-			if(!$conn) {
-				header("Refresh: 1; url=Killall.php");
-				die('Could not connect: ' . mysql_error());
+			$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+			//check connection
+			if(mysqli_connect_errno()){
+				header("Refresh: 2; url=Killall.php");
+				die("neprisijungta: ".$mysqli->connect_error);
 			}
-			mysql_set_charset("UTF8", $conn);
-			mysql_select_db($_SESSION['db'], $conn);
-			$retval = mysql_query("UPDATE ServerInfo SET reset=false", $conn );
-			$Kn=mysql_result(mysql_query("SELECT Kn FROM ServerInfo",$conn),0,0);
-			$Kt=mysql_result(mysql_query("SELECT Kt FROM ServerInfo",$conn),0,0);
-			$rt=mysql_result(mysql_query("SELECT count(*) FROM Klausimai_Testas",$conn),0,0)-1;
-			$rz=mysql_result(mysql_query("SELECT count(*) FROM Klausimai_Zodziu",$conn),0,0)-1;
-			$rv=mysql_result(mysql_query("SELECT count(*) FROM Klausimai_Vaizdo",$conn),0,0)-1;
+			$mysqli->set_charset("UTF8");
+			$result = $mysqli->query("UPDATE ServerInfo SET reset=false");
+			$fetch=$mysqli->query("SELECT Kn FROM ServerInfo");
+			$Kn=$fetch->fetch_row()['0'];
+			$fetch=$mysqli->query("SELECT Kt FROM ServerInfo");
+			$Kt=$fetch->fetch_row()['0'];
+			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Testas");
+			$rt=$fetch->fetch_row()['0']-1;
+			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Zodziu");
+			$rz=$fetch->fetch_row()['0']-1;
+			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Vaizdo");
+			$rv=$fetch->fetch_row()['0']-1;
+			switch ($Kt) {
+				case "Testas":
+				  $rn=$rt;
+					break;
+				case 'Vaizdo':
+					$rn=$rv;
+					break;
+				case 'Zodziu':
+					$rn=$rz;
+					break;
+				default:
+					$rn=0;
+					break;
+			}
 			if(isset($_POST['add'])){
-				mysql_query( "UPDATE ServerInfo SET reset=true", $conn );
+				$result = $mysqli->query("UPDATE ServerInfo SET reset=true");
 				sleep(3);
-				mysql_query( "UPDATE ServerInfo SET reset=false", $conn );
+				$result = $mysqli->query("UPDATE ServerInfo SET reset=false");
 				$sql = "UPDATE ServerInfo SET Kn= ".$_POST['Kn'].",Kt= \"".$_POST['Kt']."\"";
-				$retval = mysql_query( $sql, $conn );
-				if(!$retval ) {
+				$result = $mysqli->query($sql);
+				if(!$result) {
 					echo "Klaida: ".mysql_error();
 				}
 				header("Refresh: 3; url=Client.php");
@@ -67,14 +88,15 @@
 		<p><a href="Killall.php"><button>Atsijungti</button></a></p>
 		<?php
 				$sql = "SELECT Nr, Pav FROM Komandos";
-				$result = mysql_query($sql, $conn);
+				$result = $mysqli->query($sql);
 				if(! $result )
 				{
 					die('Could not get data: ' . mysql_error());
 				}
-				if (mysql_num_rows($result) > 0) {
-					for($a=0;$a<mysql_num_rows($result);$a++) {
-						echo "<p>".mysql_result($result,$a,0)." ".mysql_result($result,$a,1)."</p>";
+				if ($result->field_count>0)
+				{
+					while ($row=$result->fetch_row()) {
+						echo $row['0']." ".$row['1']."<bt>";
 					}
 				}
 		?>

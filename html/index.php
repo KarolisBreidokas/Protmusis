@@ -9,7 +9,7 @@
 			session_start();
 			// ignore login screen if already loged in
 			if(isset($_SESSION['dbuser'])==true){
-				header("Refresh: 1; url=Killall.php");
+				header("Refresh: 1; url=Client.php");
 				die("Palaukite");
 			}
 		 		if(isset($_POST['add'])){

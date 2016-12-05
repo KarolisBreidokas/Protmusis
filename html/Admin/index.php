@@ -5,31 +5,41 @@
 	</head>
 	<body>
 		<?php
+			ini_set('display_errors', 'On');
 			session_start();
+			// ignore login screen if already loged in
 			if(isset($_SESSION['dbuser'])==true){
-				header("Refresh: 1; url=Loby.php");
+				header("Refresh: 1; url=Client.php");
 				die("Palaukite");
 			}
 	 		if(isset($_POST['add'])){
+				//add info to session
 				$_SESSION['dbuser']=$_POST['username'];
 				$_SESSION['dbpass']=$_POST['password'];
 				$_SESSION['db']="Info";
 				$_SESSION['dbhost']=$_SERVER['SERVER_ADDR'];
-				$conn = mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION['dbuser'], $_SESSION['dbpass']);
-				if(! $conn ) {
+				$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+				//check connection
+				if(mysqli_connect_errno()){
 					header("Refresh: 2; url=Killall.php");
-					die('Could not connect: ' . mysql_error());
+					die("neprisijungta: ".$mysqli->connect_error);
 				}
-				mysql_set_charset("UTF8", $conn);
-				mysql_select_db($_SESSION['db'], $conn);
-				$_SESSION['id']=mysql_result(mysql_query("SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"",$conn),0,0);
-				if(is_null($_SESSION['id'])){
-					header("Refresh: 2; url=Killall.php");
-					die("Check Your privilege".mysql_error());
+				$mysqli->set_charset("UTF8");
+				$sql="SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"";
+				if ($result = $mysqli->query($sql))
+				{
+					$row=$result->fetch_row();
+					$_SESSION['id']=$row['0'];
+					if(is_null($_SESSION['id'])){
+						header("Refresh: 1; url=Killall.php");
+						die("Invalid access");
+					}
+					header("Refresh: 1; url=Loby.php");
+					die("Palaukite");
 				}
-				$_SESSION['Admin']=true;
-				echo "Palaukite";
-				header("Refresh: 1; url=Loby.php");
+				else{
+					die("Klaida:1");
+				}
 			}else{
 		?>
 		<form id='login' action="<?php $_PHP_SELF ?>" method='post' accept-charset='UTF-8'>
