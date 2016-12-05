@@ -96,7 +96,7 @@
 				if ($result->field_count>0)
 				{
 					while ($row=$result->fetch_row()) {
-						echo $row['0']." ".$row['1']."<bt>";
+						echo $row['0']." ".$row['1']."<br>";
 					}
 				}
 		?>
