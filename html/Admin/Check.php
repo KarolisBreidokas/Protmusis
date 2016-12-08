@@ -8,14 +8,20 @@
   </head>
   <body>
 	  <?php
+			ini_set('display_errors', 'On');
 	  	session_start();
-	  	$conn = mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION["dbuser"], $_SESSION["dbpass"]);
-			if(! $conn ) {
-				header("Refresh: 2; url=Killall.php");
-				die('Could not connect: ' . mysql_error());
-			}
-			mysql_set_charset("UTF8", $conn);
-	  	mysql_select_db($_SESSION['db'], $conn);
+			$st;
+			if($_SESSION['dbuser']!="root"){
+        echo "<script type='text/javascript'>alert('Tik turint root privilegijas How the f**k you got there');</script>";
+        header("Refresh: 0; url=Loby.php");
+      }
+      $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+      //check connection
+      if(mysqli_connect_errno()){
+        header("Refresh: 2; url=Killall.php");
+        die("neprisijungta: ".$mysqli->connect_error);
+      }
+      $mysqli->set_charset("UTF8");
 			$Table = array('1' => "Klausimai_Zodziu",
 										 '2' => "Klausimai_Vaizdo",
 										);
@@ -53,29 +59,31 @@
 				header("Refresh: 0; url=Check.php");
 			}
 			echo $_SESSION['Kn']."<br>".$_SESSION['Kt']."<br>";
-			$sqli="SELECT * FROM ".$Table[$_SESSION['Kt']]." WHERE Nr=".$_SESSION['Kn'];
-			$ret= mysql_query($sqli,$conn);
+			$sql="SELECT * FROM ".$Table[$_SESSION['Kt']]." WHERE Nr=".$_SESSION['Kn'];
+			$ret= $mysqli->query($sql);
 			if(!$ret){
-				die('Klaida: ' . $sqli);
+				die('Klaida: ');
 			}
-			echo "<p>Klausimas: ".mysql_result($ret,0,1)."</p>";
-			echo "<p>Atsakymas: ".mysql_result($ret,0,2)."</p>";
+			$row=$ret->fetch_row();
+			echo "<p>Klausimas: ".$row['1']."</p>";
+			echo "<p>Atsakymas: ".$row['2']."</p>";
 			$sql = "SELECT Ko,Ats,Teis FROM Atsakymai WHERE Nr=".$_SESSION['Kn']." AND Type=".$_SESSION['Kt']." ORDER BY Ko";
-			$retval = mysql_query( $sql, $conn );
+			$retval = $mysqli->query( $sql);
 			if(!$retval){
 				die('Klaida: ' . $sql);
 			}
 			if(isset($_POST['Vert'])){
-				for ($i=0; $i < mysql_num_rows($retval); $i++) {
-					$id=mysql_result($retval,$i,0);
+				foreach ($st as $key => $value) {
+					$id=$value['0'];
 					$sql="UPDATE Atsakymai SET Teis=".$_POST[$i]." WHERE Nr=".$_SESSION['Kn']." AND Type=".$_SESSION['Kt']." AND Ko=".$id;
-					$query=mysql_query($sql,$conn);
+					$query=$mysqli->query($sql,$conn);
 					if(!$query){
 						die ("Klaida ".mysql_error());
 					}
 				}
 				header("Refresh: 0; url=Check.php");
 			}else{
+				if($retval->num_rows>0){
 		?>
 		<form action="<?php $_PHP_SELF ?>" method="post">
 			<table width = "400" border = "1" cellspacing = "1" cellpadding = "2">
@@ -84,17 +92,14 @@
 					<th colspan="3">Vertinimas</th>
 				</tr>
 				<?php
-					for ($i=0; $i < mysql_num_rows($retval); $i++) {
+
+					while ($row=$retval->fetch_row()) {
+						$st[$row['0']]=$row;
 						echo "<tr>";
-						echo "<td>".mysql_result($retval,$i,1)."</td>";
-						echo "<td>".mysql_result($retval,$i,2)."</td>";
-						echo "<td><input name=\"".$i."\" type=\"radio\" ";
-						if(mysql_result($retval,$i,2)==1) echo "checked";
-						echo " value=1>1</td>";
-						echo "<td><input name=\"".$i."\" type=\"radio\" ";
-						if(mysql_result($retval,$i,2)==0) echo "checked";
-						echo " value=0>0</td>";
-						echo "</tr>";
+						echo "<td>".$row['1']."</td>";
+						echo "<td>".$row['2']."</td>";
+						echo "<td><input name=\"".$n."\" type=\"radio\" ";
+						$n++;
 					}
 				?>
 				<tr>
@@ -104,7 +109,11 @@
 			</table>
 		</form>
 		<?php
-			}
+	}
+		else{
+				echo "Nėra atsakymų";
+		}
+	}
 		?>
   </body>
 </html>

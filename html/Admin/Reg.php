@@ -6,51 +6,49 @@
 	<body>
 	<?php
 		function query($sql,$conn){
-			$query=mysql_query($sql,$conn);
+			$query=$conn->query($sql);
 			if(!$query){
 				die ("Klaida ".mysql_error());
 			}
 		}
 		session_start();
-		if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
-   			header("Refresh:1; Killall.php");
-		}
-		$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-		$conn = mysql_connect($_SESSION['dbhost'], $_SESSION['dbuser'], $_SESSION['dbpass']);
-		if(! $conn ) {
+		ini_set('display_errors', 'On');
+		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+		// check connection
+		if(mysqli_connect_errno()){
 			header("Refresh: 2; url=Killall.php");
-			die('Could not connect: ' . mysql_error());
+			die("neprisijungta: ".$mysqli->connect_error);
 		}
-		mysql_set_charset("UTF8", $conn);
-		mysql_select_db($_SESSION['db'], $conn);
+		$mysqli->set_charset("UTF8");
 		if(isset($_POST['add'])){
 			$username=mysql_real_escape_string($_POST['username']);
 			$password=mysql_real_escape_string($_POST['password']);
 			$password_rep=mysql_real_escape_string($_POST['password_rep']);
-			$sqlr=mysql_query("SELECT COUNT(*) from Komandos where Pav=\"".$username."\"",$conn);
-			if(mysql_result($sqlr,0,0)>0){
+			$sqlr=$mysqli->query("SELECT COUNT(*) from Komandos where Pav=\"".$username."\"",$conn);
+			$row=$sqlr->fetch_row();
+			if($row['0']>0){
 				header("Refresh: 1; url=Reg.php");
 				die ("komandos pavadinimas jau paimtas");
 			}
 			if($password==$password_rep){
 				$sql="GRANT USAGE ON *.* TO '".$username."'@'%' IDENTIFIED BY '".$password."';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT EXECUTE ON `Info.Send`.* TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT SELECT (Klausimas, Nr) ON `Info`.`Klausimai_Vaizdo` TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT INSERT (Ats, Nr, Type, Ko) ON `Info`.`Atsakymai` TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT SELECT (Klausimas, Nr) ON `Info`.`Klausimai_Zodziu` TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT SELECT ON `Info`.`ServerInfo` TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT SELECT (Klausimas, Nr, C, B, A) ON `Info`.`Klausimai_Testas` TO '".$username."'@'%';";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="GRANT SELECT ON `Info`.`ServerInfo` TO '".$username."'@'%'";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				$sql="INSERT INTO Komandos (Pav) VALUES ('".$username."')";
-				query($sql,$conn);
+				query($sql,$mysqli);
 				header("Refresh: 1; url=Reg.php");
 				die ("įvesta");
 			}

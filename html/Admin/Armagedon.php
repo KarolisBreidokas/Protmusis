@@ -7,44 +7,44 @@
 
   <body>
     <?php
+      ini_set('display_errors', 'On');
 			session_start();
       if($_SESSION['dbuser']!="root"){
         echo "<script type='text/javascript'>alert('Tik turint root privilegijas How the f**k you got there');</script>";
         header("Refresh: 0; url=Loby.php");
       }
-			$conn = mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION['dbuser'], $_SESSION['dbpass']);
-			if(! $conn ) {
-				header("Refresh: 2; url=Killall.php");
-				die('Could not connect: ' . mysql_error());
-			}
-			mysql_set_charset("UTF8", $conn);
-			mysql_select_db($_SESSION['db'], $conn);
+      $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+      //check connection
+      if(mysqli_connect_errno()){
+        header("Refresh: 2; url=Killall.php");
+        die("neprisijungta: ".$mysqli->connect_error);
+      }
+      $mysqli->set_charset("UTF8");
       if(isset($_POST['submit'])){
         if($_POST['confirm']==$_SESSION['dbpass']){
-          $retval=mysql_query("SELECT Pav FROM Komandos WHERE Nr>0",$conn);
+          $retval=$mysqli->query("SELECT Pav FROM Komandos WHERE Nr>0");
           if(!$retval ) {
-  					die("Klaida: ".mysql_error());
+  					die("Klaida: ");
   				}
-          for ($i=0; $i < mysql_num_rows($retval); $i++) {
-            $rem=mysql_result($retval,$i,0);
-            $sql="DROP USER ".$rem;
-            $query=mysql_query($sql,$conn);
-            if(!$query ) {
-    					die("Klaida: ".mysql_error());
-    				}
+          while ($rem=$retval->fetch_row()) {
+            $sql="DROP USER ".$rem['0'];
+            $query=$mysqli->query($sql);
+            if(!$query) {
+    					die("Klaida: ");
+            }
           }
-          $retval=mysql_query("SELECT Pav FROM Admins WHERE Nr>0",$conn);
-          for ($i=0; $i < mysql_num_rows($retval); $i++) {
-            $rem=mysql_result($retval,$i,0);
-            $sql="DROP USER ".$rem;
-            $query=mysql_query($sql,$conn);
-            if(!$query ) {
-    					die("Klaida: ".mysql_error());
-    				}
+
+          $retval=$mysqli->query("SELECT Pav FROM Admins WHERE Nr>0");
+          while ($rem=$retval->fetch_row()) {
+            $sql="DROP USER ".$rem['0'];
+            $query=$mysqli->query($sql);
+            if(!$query) {
+              die("Klaida: ");
+            }
           }
-          $query=mysql_query("CALL reset",$conn);
+          $query=$mysqli->query("CALL reset");
           if(!$query ) {
-            die("Klaida: ".mysql_error());
+            die("Klaida: ");
           }
           header("Refresh: 3; url=Killall.php");
           die("ištrinta teisingai");

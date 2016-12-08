@@ -1,14 +1,18 @@
 <?php
+    ini_set('display_errors', 'On');
     session_start();
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache');
-    $conn=mysql_connect($_SERVER['SERVER_ADDR'], $_SESSION["dbuser"], $_SESSION["dbpass"]);
-    function sendMsg($id, $msg) {
+    $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+    function sendMsg() {
       echo "id: 100 \n" . PHP_EOL;
       echo "data: 100 \n\n" . PHP_EOL;
       echo PHP_EOL;
     }
-    if(mysql_result(mysql_query("SELECT reset FROM Info.ServerInfo",$conn),0,0)==true){
+    $ret=$mysqli->query("SELECT reset FROM ServerInfo");
+    $row=$ret->fetch_row();
+    if($row['0']){
+        sendMsg();
         sendMsg();
     }
 ?>

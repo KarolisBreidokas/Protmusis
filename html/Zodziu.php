@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<?php
-		ession_start();
+		session_start();
 		ini_set('display_errors', 'On');
 		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
 		// check connection
@@ -14,27 +14,35 @@
 			die("neprisijungta: ".$mysqli->connect_error);
 		}
 		$mysqli->set_charset("UTF8");
-		$sql="SELECT Kn FROM ServerInfo";
+		$sql="SELECT Kn,Kt FROM ServerInfo";
 		if ($result = $mysqli->query($sql))
 		{
 			$row=$result->fetch_row();
 			$Kn=$row['0'];
+			$Kt=$row['1'];
+			if($Kt<>"Zodziu"){
+				header("Refresh: 0; url=Client.php");
+			}
 		}
 		else{
-			die("Klaida:");
+			die("Klaida:".$mysqli->error);
 		}
 			if(isset($_POST['add'])) {
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",1,\"".mysql_real_escape_string($_POST['Ats'])."\")";
-					if($mysqli->query($sql)){
-						echo "good";
-					}
-					else echo "bad: ".mysqli_error($mysqli);
+					if(!($mysqli->query($sql))){
+						header("Refresh: 2; url=Client.php");
+					  die( "bad: ".mysqli_error($mysqli));
+				 }
+			 }
+			 header("Refresh: 1; url=Wait.php");
+				die("Įvesta teisingai");
 			}else {
-				$sql="SELECT Klausimas FROM Info.Klausimai_Zodziu WHERE  Nr='$Kn'";
+				$sql="SELECT Klausimas FROM Klausimai_Zodziu WHERE  Nr='$Kn'";
 				if ($result = $mysqli->query($sql))
 				{
 					$row=$result->fetch_row();
+				}
 		?>
 		<h1>Viktorinos Klausimai Žodžiu</h1>
 		<form id="zod" method = "post" action = "<?php $_PHP_SELF ?>">

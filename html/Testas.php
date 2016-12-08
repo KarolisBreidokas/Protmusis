@@ -14,11 +14,15 @@
 				die("neprisijungta: ".$mysqli->connect_error);
 			}
 			$mysqli->set_charset("UTF8");
-			$sql="SELECT Kn FROM ServerInfo";
+			$sql="SELECT Kn,Kt FROM ServerInfo";
 			if ($result = $mysqli->query($sql))
 			{
 				$row=$result->fetch_row();
 				$Kn=$row['0'];
+				$Kt=$row['1'];
+				if($Kt<>"Testas"){
+					header("Refresh: 0; url=Client.php");
+				}
 			}
 			else{
 				die("Klaida:");
@@ -26,11 +30,13 @@
 			if(isset($_POST['add'])) {
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",0,".$_POST['Ats'].")";
-					if($mysqli->query($sql)){
-						echo "good";
+					if(!($mysqli->query($sql))){
+						header("Refresh: 2; url=Client.php");
+						die("Klaida");
 					}
-					else echo "bad: ".mysqli_error($mysqli);
 				}
+				header("Refresh: 1; url=Wait.php");
+				die("Įvesta teisingai");
 			}else {
 			$sql="SELECT Klausimas , A , B , C FROM Klausimai_Testas WHERE  Nr='$Kn'";
 			if ($result = $mysqli->query($sql))
