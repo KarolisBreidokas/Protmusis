@@ -13,6 +13,5 @@
     $row=$ret->fetch_row();
     if($row['0']){
         sendMsg();
-        sendMsg();
     }
 ?>

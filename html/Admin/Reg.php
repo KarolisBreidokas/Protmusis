@@ -8,7 +8,7 @@
 		function query($sql,$conn){
 			$query=$conn->query($sql);
 			if(!$query){
-				die ("Klaida ".mysql_error());
+				die ("Klaida ".$mysqli->error);
 			}
 		}
 		session_start();
@@ -21,9 +21,9 @@
 		}
 		$mysqli->set_charset("UTF8");
 		if(isset($_POST['add'])){
-			$username=mysql_real_escape_string($_POST['username']);
-			$password=mysql_real_escape_string($_POST['password']);
-			$password_rep=mysql_real_escape_string($_POST['password_rep']);
+			$username=mysqli_real_escape_string($mysqli,$_POST['username']);
+			$password=mysqli_real_escape_string($mysqli,$_POST['password']);
+			$password_rep=mysqli_real_escape_string($mysqli,$_POST['password_rep']);
 			$sqlr=$mysqli->query("SELECT COUNT(*) from Komandos where Pav=\"".$username."\"",$conn);
 			$row=$sqlr->fetch_row();
 			if($row['0']>0){
@@ -33,7 +33,7 @@
 			if($password==$password_rep){
 				$sql="GRANT USAGE ON *.* TO '".$username."'@'%' IDENTIFIED BY '".$password."';";
 				query($sql,$mysqli);
-				$sql="GRANT EXECUTE ON `Info.Send`.* TO '".$username."'@'%';";
+				$sql="GRANT EXECUTE ON `Info.send`.* TO '".$username."'@'%';";
 				query($sql,$mysqli);
 				$sql="GRANT SELECT (Klausimas, Nr) ON `Info`.`Klausimai_Vaizdo` TO '".$username."'@'%';";
 				query($sql,$mysqli);
@@ -47,9 +47,11 @@
 				query($sql,$mysqli);
 				$sql="GRANT SELECT ON `Info`.`ServerInfo` TO '".$username."'@'%'";
 				query($sql,$mysqli);
+				$sql="GRANT SELECT ON `Info`.`Komandos` TO '".$username."'@'%'";
+				query($sql,$mysqli);
 				$sql="INSERT INTO Komandos (Pav) VALUES ('".$username."')";
 				query($sql,$mysqli);
-				header("Refresh: 1; url=Reg.php");
+				//header("Refresh: 1; url=Reg.php");
 				die ("įvesta");
 			}
 		}else{
@@ -66,7 +68,7 @@
 			<input type='submit' name='add' id = 'add' value='Submit' />
 		</fieldset>
 	</form>
-	<p><a href="Loby.php"><button>Pahrindinis meniu</button></a></p>
+	<p><a href="Loby.php"><button>Pagrindinis meniu</button></a></p>
 	<p><a href="Killall.php"><button>Atsijungti</button></a></p>
 	<?php
 		}

@@ -7,6 +7,7 @@
 		<?php
 			session_start();
 			ini_set('display_errors', 'On');
+			echo 	$_SESSION['id'];
 			$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
 			// check connection
 			if(mysqli_connect_errno()){
@@ -31,8 +32,8 @@
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",0,".$_POST['Ats'].")";
 					if(!($mysqli->query($sql))){
-						header("Refresh: 2; url=Client.php");
-						die("Klaida");
+						//header("Refresh: 2; url=Client.php");
+						die("Klaida ".$mysqli->error);
 					}
 				}
 				header("Refresh: 1; url=Wait.php");

@@ -25,15 +25,16 @@
 						die("neprisijungta: ".$mysqli->connect_error);
 					}
           $mysqli->set_charset("UTF8");
-					$sql="SELECT Nr FROM Komandos";
+					$sql="SELECT Nr FROM Komandos where pav=\"".$_SESSION['dbuser']."\"";
 					if ($result = $mysqli->query($sql))
 					{
 						$row=$result->fetch_row();
 						$_SESSION['id']=$row['0'];
+						echo $_SESSION['id'];
 						header("Refresh: 1; url=Client.php");
 					}
 					else{
-						die("Klaida:1");
+						die("Klaida: ".$mysqli->error);
 					}
 
 				}else{
