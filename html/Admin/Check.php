@@ -46,11 +46,10 @@
 				<tr>
 					<td></td>
 					<td><input name="update" type="submit" value="Pateikti"></td>
-
 				</tr>
 			</table>
 		</form>
-		<p><a href="Loby.php"><button>Pahrindinis meniu</button></a></p>
+		<p><a href="Loby.php"><button>Pagrindinis meniu</button></a></p>
 		<p><a href="Killall.php"><button>Atsijungti</button></a></p>
 		<?php
 			if(isset($_POST['update'])){

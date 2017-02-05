@@ -8,10 +8,21 @@
 			ini_set('display_errors', 'On');
 			session_start();
 			// ignore login screen if already loged in
-			if(isset($_SESSION['dbuser'])==true){
-				header("Refresh: 1; url=Client.php");
+			if(isset($_SESSION['dbuser'])){
+				$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
+				$sql="SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"";
+				if ($result = $mysqli->query($sql))
+				{
+					$row=$result->fetch_row();
+					$_SESSION['id']=$row['0'];
+					if(is_null($_SESSION['id'])){
+						header("Refresh: 1; url=Killall.php");
+						die("Invalid access");
+					}
+				header("Refresh: 1; url=Loby.php");
 				die("Palaukite");
 			}
+		}
 	 		if(isset($_POST['add'])){
 				//add info to session
 				$_SESSION['dbuser']=$_POST['username'];

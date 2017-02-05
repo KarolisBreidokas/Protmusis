@@ -22,7 +22,8 @@
 				die("neprisijungta: ".$mysqli->connect_error);
 			}
 			$mysqli->set_charset("UTF8");
-			$result = $mysqli->query("UPDATE ServerInfo SET reset=false");
+			$fetch=$mysqli->query("SELECT reset FROM ServerInfo");
+			$reset=$fetch->fetch_row()['0'];
 			$fetch=$mysqli->query("SELECT Kn FROM ServerInfo");
 			$Kn=$fetch->fetch_row()['0'];
 			$fetch=$mysqli->query("SELECT Kt FROM ServerInfo");
@@ -47,17 +48,22 @@
 					$rn=0;
 					break;
 			}
-			if(isset($_POST['add'])){
+			if(isset($_POST['new'])){
 				$result = $mysqli->query("UPDATE ServerInfo SET reset=true");
-				sleep(3);
-				$result = $mysqli->query("UPDATE ServerInfo SET reset=false");
-				$sql = "UPDATE ServerInfo SET Kn= ".$_POST['Kn'].",Kt= \"".$_POST['Kt']."\"";
-				$result = $mysqli->query($sql);
+				$reset=true;
 				if(!$result) {
 					echo "Klaida: ".mysql_error();
 				}
-				header("Refresh: 3; url=Client.php");
-			}else{
+			}
+			if($reset){
+			if(isset($_POST['add'])){
+					$sql = "UPDATE ServerInfo SET Kn= ".$_POST['Kn'].",Kt= \"".$_POST['Kt']."\",reset=false";
+					$result = $mysqli->query($sql);
+					if(!$result) {
+						echo "Klaida: ".mysql_error();
+					}
+					header("Refresh: 100; url=Client.php");
+				}else{
 		?>
 		<form method = "post" action = "<?php $_PHP_SELF ?>">
 			<table width = "500" border = "1" cellspacing = "1" cellpadding = "2">
@@ -84,8 +90,21 @@
 				</tr>
 			</table>
 		</form>
+		<?php
+		}
+		}else {
+			?>
+			<p><form action="<?php $_PHP_SELF ?>" method="post">
+				<input type="submit" name="new" value="new">
+			</form></p>
+			<?php
+		}
+		?>
 		<p><a href="Loby.php"><button>Pagrindinis meniu</button></a></p>
 		<p><a href="Killall.php"><button>Atsijungti</button></a></p>
+		<?php
+		?>
+
 		<?php
 				$sql = "SELECT Nr, Pav FROM Komandos";
 				$result = $mysqli->query($sql);
@@ -111,6 +130,6 @@
 				document.getElementById("my").max = <?php echo $rv ?>;
 			}
 		</script>
-		<?php } ?>
+
 	</body>
 </html>

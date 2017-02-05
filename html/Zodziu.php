@@ -1,7 +1,7 @@
 <html>
 	<head>
-	<title>Viktorina: Testiniai klausimai</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Viktorina: Testiniai klausimai</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	</head>
 	<body>
 		<?php
@@ -23,15 +23,14 @@
 			if($Kt<>"Zodziu"){
 				header("Refresh: 0; url=Client.php");
 			}
-		}
-		else{
+		}else{
 			die("Klaida:".$mysqli->error);
 		}
 			if(isset($_POST['add'])) {
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",1,\"".mysql_real_escape_string($_POST['Ats'])."\")";
 					if(!($mysqli->query($sql))){
-						header("Refresh: 2; url=Client.php");
+						header("Refresh: 2; url=Wait.php");
 					  die( "bad: ".mysqli_error($mysqli));
 				 }
 			 }
@@ -60,7 +59,7 @@
 			};
 		</script>
 		<?php
-			}
+		}
 		?>
 	</body>
 </html>

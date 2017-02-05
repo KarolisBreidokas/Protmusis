@@ -19,6 +19,16 @@
 			header("Refresh: 2; url=Killall.php");
 			die("neprisijungta: ".$mysqli->connect_error);
 		}
+		$sql="SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"";
+		if ($result = $mysqli->query($sql))
+		{
+			$row=$result->fetch_row();
+			$_SESSION['id']=$row['0'];
+			if(is_null($_SESSION['id'])){
+				header("Refresh: 1; url=Killall.php");
+				die("Invalid access");
+			}else{
+
 		$mysqli->set_charset("UTF8");
 		if(isset($_POST['add'])){
 			$username=mysqli_real_escape_string($mysqli,$_POST['username']);
@@ -71,7 +81,9 @@
 	<p><a href="Loby.php"><button>Pagrindinis meniu</button></a></p>
 	<p><a href="Killall.php"><button>Atsijungti</button></a></p>
 	<?php
+			}
 		}
+	}
 	?>
 	</body>
 </html>

@@ -14,22 +14,21 @@
       die("neprisijungta: ".$mysqli->connect_error);
     }
     $mysqli->set_charset("UTF8");
-      $sql = "SELECT Pav AS Komanda,Teisingai FROM Komandos AS a LEFT JOIN
+    $sql = "SELECT Pav AS Komanda,Teisingai FROM Komandos AS a LEFT JOIN
               (SELECT Ko,Count(*) AS Teisingai FROM Atsakymai WHERE Teis=1 GROUP BY Ko) as b ON a.Nr=b.Ko
               WHERE Pav<>\"root\" ORDER BY Teisingai DESC";
-      $retval = $mysqli->query( $sql);
+      $retval = $mysqli->query($sql);
       if(! $retval ) {
-        die(mysql_error());
+        die($mysqli->error);
       }
-      if($retval->num_rows=0){
+      if($retval->num_rows==0){
         echo "Komandų nėra";
       }else{
     ?>
     <table width = "500" border = "1" cellspacing = "1" cellpadding = "2">
-      <?php
-      $row=$retval->fetch_field();
-        while ($row=$retval->fetch_field();) {
-          echo "<th>".mysql_field_name($retval,$a)."</th>\n";
+      <?ph
+        while ($row=$retval->fetch_field()) {
+          echo "<th>".$row->name."</th>\n";
         }
         while ($row=$retval->fetch_row()) {
           echo "<tr>\n";

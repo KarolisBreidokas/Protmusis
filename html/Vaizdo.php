@@ -32,8 +32,8 @@
 					if($Kn<>0){
 						$sql="CALL send (".$_SESSION['id'].",".$Kn.",2,\"".mysql_real_escape_string($_POST['Ats'])."\")";
 						if(!($mysqli->query($sql))){
-							header("Refresh: 2; url=Client.php");
-							die( "bad: ".mysqli_error($mysqli));
+							header("Refresh: 2; url=Wait.php");
+							die( "bad: ".$mysqli->error);
 						}
 						header("Refresh: 1; url=Wait.php");
 						die("Įvesta teisingai");

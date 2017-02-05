@@ -26,13 +26,13 @@
 				}
 			}
 			else{
-				die("Klaida:");
+				die("Klaida:".$mysqli->error);
 			}
 			if(isset($_POST['add'])) {
 				if($Kn<>0){
 					$sql="CALL send (".$_SESSION['id'].",".$Kn.",0,".$_POST['Ats'].")";
 					if(!($mysqli->query($sql))){
-						//header("Refresh: 2; url=Client.php");
+						header("Refresh: 2; url=Wait.php");
 						die("Klaida ".$mysqli->error);
 					}
 				}

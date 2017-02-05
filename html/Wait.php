@@ -6,7 +6,7 @@
 	<body>
 		<h1>Palaukite</h1>
 		<script type="text/javascript">
-			var source = new EventSource('Admin/reset.php');
+			var source = new EventSource('Admin/Start.php');
 			source.onmessage = function(e) {
 				document.location = "Client.php";
 			};
