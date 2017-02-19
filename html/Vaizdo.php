@@ -5,19 +5,13 @@
 	</head>
 	<body>
 		<?php
-		session_start();
 		ini_set('display_errors', 'On');
-		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-		// check connection
-		if(mysqli_connect_errno()){
-			header("Refresh: 2; url=Killall.php");
-			die("neprisijungta: ".$mysqli->connect_error);
-		}
-		$mysqli->set_charset("UTF8");
+		include 'Admin/connections.php';
+		session_start();
+		$mysqli=ClientConnect();
 		$sql="SELECT Kn,Kt FROM ServerInfo";
 		if ($result = $mysqli->query($sql))
 		{
-
 			$row=$result->fetch_row();
 			$Kn=$row['0'];
 			$Kt=$row['1'];

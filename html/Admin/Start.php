@@ -1,6 +1,5 @@
 <?php
-    ini_set('display_errors', 'On');
-    session_start();
+    session_start(); 
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache');
     $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);

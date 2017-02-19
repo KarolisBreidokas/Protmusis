@@ -5,20 +5,18 @@
 	</head>
 	<body>
 	<?php
+		include 'connections.php';
 		function query($sql,$conn){
 			$query=$conn->query($sql);
 			if(!$query){
 				die ("Klaida ".$mysqli->error);
 			}
 		}
+		ini_set('display_errors', 'On');
+		include 'connections.php';
 		session_start();
 		ini_set('display_errors', 'On');
-		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-		// check connection
-		if(mysqli_connect_errno()){
-			header("Refresh: 2; url=Killall.php");
-			die("neprisijungta: ".$mysqli->connect_error);
-		}
+		$mysqli= Connect();
 		$sql="SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"";
 		if ($result = $mysqli->query($sql))
 		{

@@ -8,20 +8,11 @@
   </head>
   <body>
 	  <?php
-			ini_set('display_errors', 'On');
-	  	session_start();
+	  	ini_set('display_errors', 'On');
+			include 'connections.php';
+			session_start();
 			$st;
-			if($_SESSION['dbuser']!="root"){
-        echo "<script type='text/javascript'>alert('Tik turint root privilegijas How the f**k you got there');</script>";
-        header("Refresh: 0; url=Loby.php");
-      }
-      $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-      //check connection
-      if(mysqli_connect_errno()){
-        header("Refresh: 2; url=Killall.php");
-        die("neprisijungta: ".$mysqli->connect_error);
-      }
-      $mysqli->set_charset("UTF8");
+      $mysqli = AdminConnect(true);
 			$Table = array('1' => "Klausimai_Zodziu",
 										 '2' => "Klausimai_Vaizdo",
 										);

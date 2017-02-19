@@ -6,14 +6,9 @@
 	<body>
 		<?php
 		session_start();
+		include 'Admin/connections.php';
 		ini_set('display_errors', 'On');
-		$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-		// check connection
-		if(mysqli_connect_errno()){
-			header("Refresh: 2; url=Killall.php");
-			die("neprisijungta: ".$mysqli->connect_error);
-		}
-		$mysqli->set_charset("UTF8");
+		$mysqli = ClientConnect();
 		$sql="SELECT Kn,Kt FROM ServerInfo";
 		if ($result = $mysqli->query($sql))
 		{
@@ -37,7 +32,7 @@
 			 header("Refresh: 1; url=Wait.php");
 				die("Įvesta teisingai");
 			}else {
-				$sql="SELECT Klausimas FROM Klausimai_Zodziu WHERE  Nr='$Kn'";
+				$sql="SELECT Klausimas FROM Klausimai_Zodziu WHERE Nr='$Kn'";
 				if ($result = $mysqli->query($sql))
 				{
 					$row=$result->fetch_row();

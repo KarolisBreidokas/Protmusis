@@ -6,27 +6,22 @@
   <body>
     <?php
     ini_set('display_errors', 'On');
+    include 'Admin/connections.php';
     session_start();
-    $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-    //check connection
-    if(mysqli_connect_errno()){
-      header("Refresh: 2; url=Killall.php");
-      die("neprisijungta: ".$mysqli->connect_error);
-    }
-    $mysqli->set_charset("UTF8");
+    $mysqli =Connect();
     $sql="SELECT Kt,reset FROM ServerInfo";
     if ($result = $mysqli->query($sql)){
       $row=$result->fetch_row();
       if($row['1']){
-        header("Refresh:3; Wait.php");
+        header("Refresh:1; Wait.php");
         die("Palaukite");
       }
       $Kt=$row['0'];
       echo "Palaukite";
-      header("Refresh:3; ".$Kt.".php");
       if(!$Kt){
         die("error: ". $mysqli->error);
       }
+      header("Refresh:1; ".$Kt.".php");
     }
     else{
       die("Klaida:".$mysqli->error);

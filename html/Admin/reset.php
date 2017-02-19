@@ -1,5 +1,4 @@
 <?php
-    ini_set('display_errors', 'On');
     session_start();
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache');
@@ -10,8 +9,7 @@
       echo PHP_EOL;
     }
     $ret=$mysqli->query("SELECT reset FROM ServerInfo");
-    $row=$ret->fetch_row();
-    if($row['0']){
+    if($ret->fetch_row()['0']){
         sendMsg();
     }
 ?>

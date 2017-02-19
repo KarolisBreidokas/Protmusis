@@ -8,46 +8,22 @@
 	</head>
 	<body>
 		<?php
+			function FetchRow($mysqli,$sql){
+				$fetch=$mysqli->query($sql);
+				return $fetch->fetch_row()['0'];
+			}
 			ini_set('display_errors', 'On');
+			include 'connections.php';
 			session_start();
-			// ignore login screen if already loged in
 			if(isset($_SESSION['Kt'])){
 				unset($_SESSION['Kt']);
 				unset($_SESSION['Kn']);
 			}
-			$mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-			//check connection
-			if(mysqli_connect_errno()){
-				header("Refresh: 2; url=Killall.php");
-				die("neprisijungta: ".$mysqli->connect_error);
-			}
-			$mysqli->set_charset("UTF8");
-			$fetch=$mysqli->query("SELECT reset FROM ServerInfo");
-			$reset=$fetch->fetch_row()['0'];
-			$fetch=$mysqli->query("SELECT Kn FROM ServerInfo");
-			$Kn=$fetch->fetch_row()['0'];
-			$fetch=$mysqli->query("SELECT Kt FROM ServerInfo");
-			$Kt=$fetch->fetch_row()['0'];
-			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Testas");
-			$rt=$fetch->fetch_row()['0']-1;
-			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Zodziu");
-			$rz=$fetch->fetch_row()['0']-1;
-			$fetch=$mysqli->query("SELECT count(*) FROM Klausimai_Vaizdo");
-			$rv=$fetch->fetch_row()['0']-1;
-			switch ($Kt) {
-				case "Testas":
-				  $rn=$rt;
-					break;
-				case 'Vaizdo':
-					$rn=$rv;
-					break;
-				case 'Zodziu':
-					$rn=$rz;
-					break;
-				default:
-					$rn=0;
-					break;
-			}
+			$mysqli=Connect();
+			$reset=FetchRow($mysqli,"SELECT reset FROM ServerInfo");
+			$Kn=FetchRow($mysqli,"SELECT Kn FROM ServerInfo");
+			$Kt=FetchRow($mysqli,"SELECT Kt FROM ServerInfo");
+			$rn=FetchRow($mysqli,"SELECT count(*) FROM Klausimai_".$Kt)-1;
 			if(isset($_POST['new'])){
 				$result = $mysqli->query("UPDATE ServerInfo SET reset=true");
 				$reset=true;
@@ -121,15 +97,14 @@
 		?>
 		<script type="text/javascript">
 			function ct(){
-				document.getElementById("my").max = <?php echo $rt ?>;
+				document.getElementById("my").max = <?php echo FetchRow($mysqli,"SELECT count(*) FROM Klausimai_Testas")-1; ?>;
 			}
 			function cz(){
-				document.getElementById("my").max = <?php echo $rz ?>;
+				document.getElementById("my").max = <?php echo FetchRow($mysqli,"SELECT count(*) FROM Klausimai_Zodziu")-1; ?>;
 			}
 			function cv(){
-				document.getElementById("my").max = <?php echo $rv ?>;
+				document.getElementById("my").max = <?php echo FetchRow($mysqli,"SELECT count(*) FROM Klausimai_Vaizdo")-1; ?>;
 			}
 		</script>
-
 	</body>
 </html>

@@ -7,27 +7,13 @@
   <body>
     <?php
       ini_set('display_errors', 'On');
+      include 'connections.php';
       session_start();
-      // ignore login screen if already loged in
       if(isset($_SESSION['Kt'])){
         unset($_SESSION['Kt']);
         unset($_SESSION['Kn']);
       }
-      $mysqli = new mysqli($_SESSION['dbhost'],$_SESSION['dbuser'],$_SESSION['dbpass'],$_SESSION['db']);
-      //check connection
-      if(mysqli_connect_errno()){
-        header("Refresh: 2; url=Killall.php");
-        die("neprisijungta: ".$mysqli->connect_error);
-      }
-      $sql="SELECT Nr FROM Admins WHERE Pav=\"".$_SESSION['dbuser']."\"";
-      if ($result = $mysqli->query($sql))
-      {
-        $row=$result->fetch_row();
-        $_SESSION['id']=$row['0'];
-        if(is_null($_SESSION['id'])){
-          header("Refresh: 1; url=Killall.php");
-          die("Invalid access");
-        }
+      AdminConnect();
     ?>
     <p><a href="Reg.php"><button>Komandos Registracija</button></a></p>
     <p><a href="Client.php"><button>Pagrindiė konsolė</button></a></p>
@@ -39,6 +25,5 @@
       document.getElementById("arm").remove();
     </script>
 		<p><a href="Killall.php"><button>Atsijungti</button></a></p>
-    <?php }?>
   </body>
 </html>
