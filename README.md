@@ -8,4 +8,4 @@
 + Aplanko html turinį perkelti į serverio šakninį aplanką(Ubuntu sistemoje pagal nutylėjimą /var/www/html)
   * Ubuntu sistemojoe šakninis aplankas yra pasiekiamas tik su root privilegijomis todėl norint perkeli html aplanko turinį reiks naudois "sudo cp -a /home/user/downloads/html/. /var/www/html" /home/user/downloads/html/ pakeičiant nuoroda į html aplanką
   * Naudojant phpmyadmin priedu importuoti į serverį info.sql duomenų bazės šabloną
-+ Ubuntu sistemojoe šakninis aplankas yra pasiekiamas tik su root privilegijomis todėl norint perkeli html aplanko turinį reiks naudois "sudo cp -a /home/user/downloads/html/. /var/www/html" /home/user/downloads/html/ pakeičiant nuoroda į html aplanką
++ Ubuntu sistemojoe šakninis aplankas yra pasiekiamas tik su root privilegijomis todėl norint perkeli html aplanko turinį reiks naudois "sudo cp -a <html aplanko nuoroda>. /var/www/html" (pvz "sudo cp -a /home/user/downloads/html. /var/www/html")
