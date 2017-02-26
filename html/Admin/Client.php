@@ -38,7 +38,7 @@
 					if(!$result) {
 						echo "Klaida: ".mysql_error();
 					}
-					header("Refresh: 100; url=Client.php");
+					header("Refresh: 0; url=Client.php");
 				}else{
 		?>
 		<form method = "post" action = "<?php $_PHP_SELF ?>">
@@ -71,7 +71,7 @@
 		}else {
 			?>
 			<p><form action="<?php $_PHP_SELF ?>" method="post">
-				<input type="submit" name="new" value="new">
+				<input type="submit" name="new" value="Užbaigti klausimą/pasirinkti naują klausimą">
 			</form></p>
 			<?php
 		}

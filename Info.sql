@@ -19,6 +19,9 @@ SET time_zone = "+00:00";
 --
 -- Duomenų bazė: `Info`
 --
+CREATE DATABASE IF NOT EXISTS `Info` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `Info`;
+
 
 DELIMITER $$
 --

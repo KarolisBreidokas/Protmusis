@@ -8,7 +8,7 @@
     ini_set('display_errors', 'On');
     include 'connections.php';
     session_start();
-    $mysqli=AdminConnect());
+    $mysqli=AdminConnect();
     $sql = "SELECT Pav AS Komanda,Teisingai FROM Komandos AS a LEFT JOIN
               (SELECT Ko,Count(*) AS Teisingai FROM Atsakymai WHERE Teis=1 GROUP BY Ko) as b ON a.Nr=b.Ko
               WHERE Pav<>\"root\" ORDER BY Teisingai DESC";
