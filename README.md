@@ -28,3 +28,5 @@
 4. Po sutarto laiko tarpo vyr. administratorius sustabto atsakymų teikimą paspaustamas mygtuką „Užbaigti klausimą/pasirinkti naują klausimą“ (**iki to laiko nespėjus pateikti atsakymo automatiškai pateikiamas paskutinis pasirinktas ar iki to laiko surinktas ataskymas**)
 5. Teisėjai, prisijungę prie administratorius sistemos ir įsijungę teisėjų prieigos puslapį gali tikrinti pateiktus atvirų ir vaizdo klausimų atsakymus.
 6. Komandų rezultatus galima rasti administratorius sistemos rezultatų puslapyje.
+
+Kilus klausimams rašykite karolis.breidokas\<at>ktu.edu
