@@ -9,10 +9,7 @@
 	include 'Admin/connections.php';
 	session_start();
 	// ignore login screen if already loged in
-	if(isset($_SESSION['dbuser'])){
-		header("Refresh: 1; url=Client.php");
-		die("Palaukite");
-	}
+
 	if(isset($_POST['add'])){
 		//add info to session
 		$_SESSION['dbuser']=$_POST['username'];
@@ -33,6 +30,9 @@
 		</fieldset>
 		</form>
 	<?php
+	}if(isset($_SESSION['dbuser'])){
+		header("Refresh: 1; url=Client.php");
+		die("Palaukite");
 	}
 	?>
 	</body>
